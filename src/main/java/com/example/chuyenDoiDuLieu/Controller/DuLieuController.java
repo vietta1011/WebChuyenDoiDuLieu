@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 public class DuLieuController {
-
     @Autowired
     private ChuyenDoiDuLieu base64DataAdapter;
 
@@ -25,62 +24,33 @@ public class DuLieuController {
     @Autowired
     private ChuyenDoiDuLieu byteDataAdapter;
 
-    @PostMapping("/encode")
-    public ResponseEntity<?> encode(@RequestParam String type, @RequestBody String input) {
-        Map<String, String> response = new HashMap<>();
-        byte[] encodedData;
-        try {
-            switch (type) {
-                case "byte":
-                    encodedData = byteDataAdapter.Encode(input);
-                    response.put("encoded", new String(encodedData));
-                    return ResponseEntity.ok(response);
-                case "hex":
-                    encodedData = hexDataAdapter.Encode(input);
-                    response.put("encoded", new String(encodedData));
-                    return ResponseEntity.ok(response);
-                case "base64":
-                    encodedData = base64DataAdapter.Encode(input);
-                    response.put("encoded", new String(encodedData));
-                    return ResponseEntity.ok(response);
-                case "string":
-                    encodedData = stringDataAdapter.Encode(input);
-                    response.put("encoded", new String(encodedData));
-                    return ResponseEntity.ok(response);
-                default:
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid encode type");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request: " + e.getMessage());
+    private ChuyenDoiDuLieu getAdapterByType(String type) {
+        switch (type) {
+            case "byte":
+                return byteDataAdapter;
+            case "hex":
+                return hexDataAdapter;
+            case "base64":
+                return base64DataAdapter;
+            case "string":
+                return stringDataAdapter;
+            default:
+                throw new IllegalArgumentException("Invalid type: " + type);
         }
     }
 
-    @PostMapping("/decode")
-    public ResponseEntity<?> decode(@RequestParam String type, @RequestBody String input) {
+    @PostMapping("/convert")
+    public ResponseEntity<?> convert(@RequestParam String inputType, @RequestParam String outputType, @RequestBody String input) {
         Map<String, Object> response = new HashMap<>();
-        byte[] inputBytes = input.getBytes();
         try {
-            Object decodedData;
-            switch (type) {
-                case "byte":
-                    decodedData = byteDataAdapter.Decode(inputBytes);
-                    response.put("decoded", decodedData);
-                    return ResponseEntity.ok(response);
-                case "hex":
-                    decodedData = hexDataAdapter.Decode(inputBytes);
-                    response.put("decoded", decodedData);
-                    return ResponseEntity.ok(response);
-                case "base64":
-                    decodedData = base64DataAdapter.Decode(inputBytes);
-                    response.put("decoded", decodedData);
-                    return ResponseEntity.ok(response);
-                case "string":
-                    decodedData = stringDataAdapter.Decode(inputBytes);
-                    response.put("decoded", decodedData);
-                    return ResponseEntity.ok(response);
-                default:
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid decode type");
-            }
+            ChuyenDoiDuLieu inputAdapter = getAdapterByType(inputType);
+            ChuyenDoiDuLieu outputAdapter = getAdapterByType(outputType);
+
+            byte[] encodedData = inputAdapter.Encode(input);
+            Object decodedData = outputAdapter.Decode(encodedData);
+
+            response.put("converted", decodedData);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request: " + e.getMessage());
         }
