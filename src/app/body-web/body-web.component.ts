@@ -39,19 +39,12 @@ export class BodyWebComponent {
       return;
     }
 
-    this.encode(this.kieuDuLieu1, this.inputDuLieu).subscribe(encodedResponse => {
-      const encodedData = encodedResponse.encoded;
-      this.decode(this.kieuDuLieu2!, encodedData).subscribe(decodedResponse => {
-        this.outputDuLieu = decodedResponse.decoded;
-      });
+    this.convert(this.kieuDuLieu1, this.kieuDuLieu2, this.inputDuLieu).subscribe(response => {
+      this.outputDuLieu = response.converted;
     });
   }
 
-  private encode(type: string, data: string): Observable<any> {
-    return this.http.post<any>(`http://localhost:8080/encode?type=${type}`, data, { responseType: 'json' });
-  }
-
-  private decode(type: string, data: string): Observable<any> {
-    return this.http.post<any>(`http://localhost:8080/decode?type=${type}`, data, { responseType: 'json' });
+  private convert(inputType: string, outputType: string, data: string): Observable<any> {
+    return this.http.post<any>(`http://localhost:8080/convert?inputType=${inputType}&outputType=${outputType}`, data, { responseType: 'json' });
   }
 }
