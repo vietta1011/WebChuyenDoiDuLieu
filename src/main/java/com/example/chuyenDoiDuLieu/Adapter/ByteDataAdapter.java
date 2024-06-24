@@ -10,6 +10,9 @@ public class ByteDataAdapter implements ChuyenDoiDuLieu {
         if (duLieu instanceof byte[]) {
             return (byte[]) duLieu; // Trả về cùng một mảng byte nếu đầu vào là mảng byte
         } else if (duLieu instanceof String) {
+            if (((String) duLieu).startsWith("[") && ((String) duLieu).endsWith("]")) {
+                duLieu = ((String) duLieu).substring(1, ((String) duLieu).length() - 1);
+            }
             String[] byteValues = ((String) duLieu).split(",");
             byte[] byteArray = new byte[byteValues.length];
             for (int i = 0; i < byteValues.length; i++) {
