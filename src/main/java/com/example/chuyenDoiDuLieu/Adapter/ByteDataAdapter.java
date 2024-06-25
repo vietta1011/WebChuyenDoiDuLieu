@@ -1,9 +1,7 @@
 package com.example.chuyenDoiDuLieu.Adapter;
 
 import com.example.chuyenDoiDuLieu.Interface.ConvertData;
-import org.springframework.stereotype.Component;
 
-@Component
 public class ByteDataAdapter implements ConvertData<String> {
     private static ByteDataAdapter byteDataAdapter;
 
