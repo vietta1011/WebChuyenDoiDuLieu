@@ -2,8 +2,8 @@
   <div class="head">
     <div class="input-choose">
       <select id="inputData" (change)="changeData($event)" [(ngModel)]="kieuDuLieu1">
-        <option *ngFor="let dataTypeInput of datas" value="{{ dataTypeInput.dulieu }}">
-          {{ dataTypeInput.dulieu }}
+        <option *ngFor="let type of types" [value]="type">
+          {{ type }}
         </option>
       </select>
     </div>
