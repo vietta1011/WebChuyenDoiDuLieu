@@ -1,19 +1,26 @@
 package com.example.chuyenDoiDuLieu.Adapter;
 
-import com.example.chuyenDoiDuLieu.Interface.ChuyenDoiDuLieu;
-import org.springframework.stereotype.Component;
+import com.example.chuyenDoiDuLieu.Interface.ConvertData;
 
 import java.nio.charset.StandardCharsets;
 
-@Component
-public class StringDataAdapter implements ChuyenDoiDuLieu {
-    @Override
-    public byte[] Encode(Object duLieu) {
-        return duLieu.toString().getBytes();
+public class StringDataAdapter implements ConvertData<String> {
+    private static StringDataAdapter stringDataAdapter;
+
+    public static StringDataAdapter getInstance() {
+        if (stringDataAdapter != null)
+            return stringDataAdapter;
+        stringDataAdapter = new StringDataAdapter();
+        return stringDataAdapter;
     }
 
     @Override
-    public Object Decode(byte[] duLieuByte) {
-        return new String((byte[]) duLieuByte, StandardCharsets.UTF_8);
+    public byte[] Encode(String duLieu) {
+        return duLieu.getBytes(StandardCharsets.UTF_8);
+    }
+
+    @Override
+    public String Decode(byte[] duLieuByte) {
+        return new String(duLieuByte, StandardCharsets.UTF_8);
     }
 }

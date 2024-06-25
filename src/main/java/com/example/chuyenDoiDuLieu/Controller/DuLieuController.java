@@ -1,7 +1,10 @@
 package com.example.chuyenDoiDuLieu.Controller;
 
-import com.example.chuyenDoiDuLieu.Interface.ChuyenDoiDuLieu;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.chuyenDoiDuLieu.Adapter.Base64DataAdapter;
+import com.example.chuyenDoiDuLieu.Adapter.ByteDataAdapter;
+import com.example.chuyenDoiDuLieu.Adapter.HexDataAdapter;
+import com.example.chuyenDoiDuLieu.Adapter.StringDataAdapter;
+import com.example.chuyenDoiDuLieu.Interface.ConvertData;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,28 +15,16 @@ import org.springframework.http.HttpStatus;
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 public class DuLieuController {
-    @Autowired
-    private ChuyenDoiDuLieu base64DataAdapter;
-
-    @Autowired
-    private ChuyenDoiDuLieu hexDataAdapter;
-
-    @Autowired
-    private ChuyenDoiDuLieu stringDataAdapter;
-
-    @Autowired
-    private ChuyenDoiDuLieu byteDataAdapter;
-
-    private ChuyenDoiDuLieu getAdapterByType(String type) {
+    private ConvertData<String> getAdapterByType(String type) {
         switch (type) {
             case "byte":
-                return byteDataAdapter;
+                return ByteDataAdapter.getInstance();
             case "hex":
-                return hexDataAdapter;
+                return HexDataAdapter.getInstance();
             case "base64":
-                return base64DataAdapter;
+                return Base64DataAdapter.getInstance();
             case "string":
-                return stringDataAdapter;
+                return StringDataAdapter.getInstance();
             default:
                 throw new IllegalArgumentException("Invalid type: " + type);
         }
@@ -43,8 +34,8 @@ public class DuLieuController {
     public ResponseEntity<?> convert(@RequestParam String inputType, @RequestParam String outputType, @RequestBody String input) {
         Map<String, Object> response = new HashMap<>();
         try {
-            ChuyenDoiDuLieu inputAdapter = getAdapterByType(inputType);
-            ChuyenDoiDuLieu outputAdapter = getAdapterByType(outputType);
+            ConvertData<String> inputAdapter = getAdapterByType(inputType);
+            ConvertData<String> outputAdapter = getAdapterByType(outputType);
 
             byte[] encodedData = inputAdapter.Encode(input);
             Object decodedData = outputAdapter.Decode(encodedData);
