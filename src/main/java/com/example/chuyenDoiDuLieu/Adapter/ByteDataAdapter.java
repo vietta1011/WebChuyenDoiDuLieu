@@ -8,9 +8,8 @@ public class ByteDataAdapter implements ConvertData<String> {
     private static ByteDataAdapter byteDataAdapter;
 
     public static ByteDataAdapter getInstance() {
-        if (byteDataAdapter != null) {
+        if (byteDataAdapter != null)
             return byteDataAdapter;
-        }
         byteDataAdapter = new ByteDataAdapter();
         return byteDataAdapter;
     }
